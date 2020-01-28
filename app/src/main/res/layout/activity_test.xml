@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/onoffBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="100dp"
+        android:text="Wifi ON" />
+
+    <Button
+        android:id="@+id/scanBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:text="Scan WiFi" />
+
+    <ListView
+        android:id = "@+id/wifiLst"
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:layout_above = "@+id/scanBtn" />
+</LinearLayout>
