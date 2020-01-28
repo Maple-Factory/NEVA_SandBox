@@ -12,6 +12,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Go to Test Activity
+        // Ref. https://coding-factory.tistory.com/203
         Intent intent = new Intent(this, TestActivity.class);
         startActivity(intent);
     }
