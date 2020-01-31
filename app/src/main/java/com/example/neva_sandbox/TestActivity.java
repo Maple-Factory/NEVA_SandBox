@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,7 +26,7 @@ import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestActivity  extends Activity {
+public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBtnClickListener {
     private WifiManager wifiManager;
     private ListView wifiList;
     WifiReceiver receiverWifi;
@@ -82,18 +83,26 @@ public class TestActivity  extends Activity {
 
                 wifiManager.startScan();
 
-                StringBuilder sb;
-                ListView wifiDeviceList = wifiList;
+//                ListView wifiDeviceList = wifiList;
 
-                sb = new StringBuilder();
+                ArrayList<ListViewBtnItem> deviceList = new ArrayList<ListViewBtnItem>();
+                ListViewBtnAdapter adapter;
+                // Adapter 생성
+                adapter = new ListViewBtnAdapter(TestActivity.this, R.layout.listview_btn_item,/* deviceList, */TestActivity.this) ;
+                // 리스트뷰 참조 및 Adapter달기
+//                wifiDeviceList = (ListView) findViewById(R.id.wifiLst);
+                wifiList.setAdapter(adapter);
+
                 List<ScanResult> wifiList = wifiManager.getScanResults();
-                ArrayList<String> deviceList = new ArrayList<>();
                 for (ScanResult scanResult : wifiList) {
-                    sb.append("\n").append(scanResult.SSID).append(" - ").append(scanResult.capabilities);
-                    deviceList.add(scanResult.SSID + " - " + scanResult.capabilities);
+//                    deviceList.add(scanResult.SSID + " - " + scanResult.capabilities + " (" + scanResult.level + ") - " + scanResult.BSSID);
+                    adapter.addItem(scanResult.SSID, scanResult.capabilities, Integer.toString(scanResult.level));
                 }
-                ArrayAdapter arrayAdapter = new ArrayAdapter(TestActivity.this, android.R.layout.simple_list_item_1/*listview_btn_item*/, deviceList.toArray());
-                wifiDeviceList.setAdapter(arrayAdapter);
+//                ArrayAdapter arrayAdapter = new ArrayAdapter(TestActivity.this, android.R.layout.simple_list_item_1/*listview_btn_item*/, deviceList.toArray());
+//                wifiDeviceList.setAdapter(arrayAdapter);
+
+
+
             }
         });
 
@@ -122,6 +131,28 @@ public class TestActivity  extends Activity {
 
         AlertDialog dialog = builder.create();      // Create Dialog Object
         dialog.show();                              // Alert Dialog
+    }
+
+    @Override
+    public void onListBtnClick(String ssid) {
+        Toast.makeText(this, ssid + " is SSID..", Toast.LENGTH_SHORT).show() ;
+        Log.d("DBG","c"+ssid.substring(3,7));
+        String networkPass = "c" + ssid.substring(3,7);
+        // https://stackoverflow.com/questions/8818290/how-do-i-connect-to-a-specific-wi-fi-network-in-android-programmatically
+
+        WifiConfiguration conf = new WifiConfiguration();
+        conf.SSID = "\"" + ssid + "\"";
+
+        conf.wepKeys[0] = "\"" + networkPass + "\"";
+        conf.wepTxKeyIndex = 0;
+        conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+
+        wifiManager.addNetwork(conf);
+
+        wifiManager.disconnect();
+        wifiManager.enableNetwork(conf.networkId, true);
+        wifiManager.reconnect();
     }
 
 //    @Override
