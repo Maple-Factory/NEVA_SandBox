@@ -20,12 +20,12 @@ public class WifiUtill {
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     private final String TAG = "WIFIIUTILL";
 
-    public WifiUtill(Context context){  // getApplicationContext() -> context
+    public WifiUtill(Context context, Activity activity){  // getApplicationContext() -> context
         this.verbose = false;
         this.wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions((Activity) context, new String[]{
+            ActivityCompat.requestPermissions(activity, new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION
             }, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
         }

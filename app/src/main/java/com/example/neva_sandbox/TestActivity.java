@@ -38,7 +38,8 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
         setContentView(R.layout.activity_test);
 
         // Test
-        wifiUtill = new WifiUtill(getApplicationContext());
+//        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiUtill = new WifiUtill(getApplicationContext(), TestActivity.this);
 
         // DEFINE Objects & Variables
 //        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
