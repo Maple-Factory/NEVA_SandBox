@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBtnClickListener {
-    private WifiManager wifiManager;
+//    private WifiManager wifiManager;
     private ListView wifiList;
-    WifiReceiver receiverWifi;
+    WifiUtill wifiUtill;
 
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
 
@@ -37,19 +37,22 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
+        // Test
+        wifiUtill = new WifiUtill(getApplicationContext());
+
         // DEFINE Objects & Variables
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final Button buttonOnoff = findViewById(R.id.onoffBtn);
         Button buttonScan = findViewById(R.id.scanBtn);
         wifiList = findViewById(R.id.wifiLst);
 
         // INITIAL ACTIONS
         // Wifi On/Off Check
-        if (!wifiManager.isWifiEnabled()) {
+        if (!wifiUtill.isWifiEnabled()) {
             wifiAlert();
         }
         // Set Wifi On/Off Button       + Add to Always Listening
-        if (!wifiManager.isWifiEnabled()) {
+        if (!wifiUtill.isWifiEnabled()) {
             buttonOnoff.setText("WIFI ON");
         }
         else {
@@ -61,13 +64,13 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
         buttonOnoff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!wifiManager.isWifiEnabled()) {
+                if (!wifiUtill.isWifiEnabled()) {
                     buttonOnoff.setText("WIFI ON");
-                    wifiManager.setWifiEnabled(true);
+                    wifiUtill.setWifiEnabled(true);
                 }
                 else {
                     buttonOnoff.setText("WIFI OFF");
-                    wifiManager.setWifiEnabled(false);
+                    wifiUtill.setWifiEnabled(false);
                 }
             }
         });
@@ -75,25 +78,26 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
         buttonScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(TestActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(TestActivity.this, new String[]{
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                    }, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
-                }
-
-                wifiManager.startScan();
+//                if (ActivityCompat.checkSelfPermission(TestActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+//                    ActivityCompat.requestPermissions(TestActivity.this, new String[]{
+//                            Manifest.permission.ACCESS_COARSE_LOCATION
+//                    }, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
+//                }
+//
+//                wifiManager.startScan();
 
 //                ListView wifiDeviceList = wifiList;
 
-                ArrayList<ListViewBtnItem> deviceList = new ArrayList<ListViewBtnItem>();
+//                ArrayList<ListViewBtnItem> deviceList = new ArrayList<ListViewBtnItem>();
                 ListViewBtnAdapter adapter;
                 // Adapter 생성
                 adapter = new ListViewBtnAdapter(TestActivity.this, R.layout.listview_btn_item,/* deviceList, */TestActivity.this) ;
+//                adapter = new ListViewBtnAdapter() ;
                 // 리스트뷰 참조 및 Adapter달기
 //                wifiDeviceList = (ListView) findViewById(R.id.wifiLst);
                 wifiList.setAdapter(adapter);
 
-                List<ScanResult> wifiList = wifiManager.getScanResults();
+                List<ScanResult> wifiList = wifiUtill.getScanResults();
                 for (ScanResult scanResult : wifiList) {
 //                    deviceList.add(scanResult.SSID + " - " + scanResult.capabilities + " (" + scanResult.level + ") - " + scanResult.BSSID);
                     adapter.addItem(scanResult.SSID, scanResult.capabilities, Integer.toString(scanResult.level));
@@ -118,7 +122,7 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
                 .setPositiveButton("확인", new DialogInterface.OnClickListener(){
                     // If Click Check
                     public void onClick(DialogInterface dialog, int whichButton){
-                        wifiManager.setWifiEnabled(true);
+                        wifiUtill.setWifiEnabled(true);
                     }
                 })
 
@@ -134,12 +138,15 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
     }
 
     @Override
-    public void onListBtnClick(String ssid) {
+    public void onListBtnClick(String ssid, String capabilities) {
         Toast.makeText(this, ssid + " is SSID..", Toast.LENGTH_SHORT).show() ;
         Log.d("DBG","c"+ssid.substring(3,7));
         String networkPass = "c" + ssid.substring(3,7);
         // https://stackoverflow.com/questions/8818290/how-do-i-connect-to-a-specific-wi-fi-network-in-android-programmatically
 
+//        boolean tf = wifiUtill.connect(ssid, networkPass, capabilities);
+//        if(tf) Log.d("TEST","True");
+//        else Log.d("TEST","False");
         WifiConfiguration conf = new WifiConfiguration();
         conf.SSID = "\"" + ssid + "\"";
 
@@ -148,6 +155,7 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
         conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
 
+        WifiManager wifiManager = wifiUtill.getTestWF();
         wifiManager.addNetwork(conf);
 
         wifiManager.disconnect();
