@@ -2,6 +2,7 @@ package com.example.neva_sandbox;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,10 @@ import java.util.ArrayList;
 
 // https://recipes4dev.tistory.com/45
 // https://recipes4dev.tistory.com/43#recentComments
-public class ListViewBtnAdapter extends ArrayAdapter implements View.OnClickListener {
+public class ListViewBtnAdapter extends ArrayAdapter /*implements View.OnClickListener */{
     // 버튼 클릭 이벤트를 위한 Listener 인터페이스 정의.
     public interface ListBtnClickListener {
-        void onListBtnClick(String ssid) ;
+        void onListBtnClick(String ssid, String capabilities) ;
     }
 
     // 생성자로부터 전달된 resource id 값을 저장.
@@ -63,7 +64,7 @@ public class ListViewBtnAdapter extends ArrayAdapter implements View.OnClickList
         TextView strTextView = (TextView) convertView.findViewById(R.id.textViewStr) ;
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        ListViewBtnItem listViewItem = listViewItemList.get(position);
+        final ListViewBtnItem listViewItem = listViewItemList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
         ssidButton.setText(listViewItem.getSsid());
@@ -72,7 +73,14 @@ public class ListViewBtnAdapter extends ArrayAdapter implements View.OnClickList
 
         // button의 TAG에 position값 지정. Adapter를 click listener로 지정.
         ssidButton.setTag(position);
-        ssidButton.setOnClickListener(this);
+//        ssidButton.setOnClickListener(this);
+        ssidButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("TEST",listViewItem.getSec());
+                listBtnClickListener.onListBtnClick(listViewItem.getSsid(), listViewItem.getSec());
+            }
+        });
+
 
         return convertView;
     }
@@ -101,12 +109,15 @@ public class ListViewBtnAdapter extends ArrayAdapter implements View.OnClickList
     }
 
     // button이 눌려졌을 때 실행되는 onClick함수.
-    public void onClick(View v) {
-        // ListBtnClickListener(MainActivity)의 onListBtnClick() 함수 호출.
-        if (this.listBtnClickListener != null) {
-            // https://recipes4dev.tistory.com/45
-            Button ssidButton = (Button) v.findViewById(R.id.buttonSSID) ;
-            this.listBtnClickListener.onListBtnClick((String) ssidButton.getText()) ; //(int)v.getTag()
-        }
-    }
+//    public void onClick(View v) {
+//        // ListBtnClickListener(MainActivity)의 onListBtnClick() 함수 호출.
+//        if (this.listBtnClickListener != null) {
+//            // https://recipes4dev.tistory.com/45
+//
+//            Button ssidButton = v.findViewById(R.id.buttonSSID);
+//
+//            Log.d("DBG", (String) ssidButton.getText());
+//            this.listBtnClickListener.onListBtnClick((String) ssidButton.getText(), listViewItem.getSec()); //(int)v.getTag()
+//        }
+//    }
 }
