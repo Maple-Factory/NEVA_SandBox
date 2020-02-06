@@ -106,8 +106,6 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
 //                ArrayAdapter arrayAdapter = new ArrayAdapter(TestActivity.this, android.R.layout.simple_list_item_1/*listview_btn_item*/, deviceList.toArray());
 //                wifiDeviceList.setAdapter(arrayAdapter);
 
-
-
             }
         });
 
@@ -145,67 +143,23 @@ public class TestActivity  extends Activity implements ListViewBtnAdapter.ListBt
         String networkPass = "c" + ssid.substring(3,7);
         // https://stackoverflow.com/questions/8818290/how-do-i-connect-to-a-specific-wi-fi-network-in-android-programmatically
 
-//        boolean tf = wifiUtill.connect(ssid, networkPass, capabilities);
-//        if(tf) Log.d("TEST","True");
-//        else Log.d("TEST","False");
-        WifiConfiguration conf = new WifiConfiguration();
-        conf.SSID = "\"" + ssid + "\"";
+        boolean tf = wifiUtill.connect(ssid, networkPass, capabilities);
+        if(tf) Log.d("TEST","True");
+        else Log.d("TEST","False");
 
-        conf.wepKeys[0] = "\"" + networkPass + "\"";
-        conf.wepTxKeyIndex = 0;
-        conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
-
-        WifiManager wifiManager = wifiUtill.getTestWF();
-        wifiManager.addNetwork(conf);
-
-        wifiManager.disconnect();
-        wifiManager.enableNetwork(conf.networkId, true);
-        wifiManager.reconnect();
+//        WifiConfiguration conf = new WifiConfiguration();
+//        conf.SSID = "\"" + ssid + "\"";
+//
+//        conf.wepKeys[0] = "\"" + networkPass + "\"";
+//        conf.wepTxKeyIndex = 0;
+//        conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+//        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+//
+//        WifiManager wifiManager = wifiUtill.getTestWF();
+//        wifiManager.addNetwork(conf);
+//
+//        wifiManager.disconnect();
+//        wifiManager.enableNetwork(conf.networkId, true);
+//        wifiManager.reconnect();
     }
-
-//    @Override
-//    protected void onPostResume() {
-//        super.onPostResume();
-//        receiverWifi = new WifiReceiver(wifiManager, wifiList);
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-//        registerReceiver(receiverWifi, intentFilter);
-//    }
-//    private void getWifi() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            Toast.makeText(TestActivity.this, "version> = marshmallow", Toast.LENGTH_SHORT).show();
-//            if (ContextCompat.checkSelfPermission(TestActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(TestActivity.this, "location turned off", Toast.LENGTH_SHORT).show();
-//                ActivityCompat.requestPermissions(TestActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-//                        1);
-//            } else {
-//                Toast.makeText(TestActivity.this, "location turned on", Toast.LENGTH_SHORT).show();
-//                wifiManager.startScan();
-//            }
-//        } else {
-//            Toast.makeText(TestActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-//            wifiManager.startScan();
-//        }
-//    }
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        unregisterReceiver(receiverWifi);
-//    }
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case 1:
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Toast.makeText(TestActivity.this, "permission granted", Toast.LENGTH_SHORT).show();
-//                    wifiManager.startScan();
-//                } else {
-//                    Toast.makeText(TestActivity.this, "permission not granted", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                break;
-//        }
-//    }
 }

@@ -15,32 +15,31 @@ import java.util.List;
 
 public class WifiUtill {
     private WifiManager wifiManager;
-    private boolean verbose;
+//    private boolean verbose;
 
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     private final String TAG = "WIFIIUTILL";
 
-    public WifiUtill(Context context, Activity activity){  // getApplicationContext() -> context
-        this.verbose = false;
+    public WifiUtill(Context context, Activity activity){
+//        this.verbose = false;
         this.wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
+        // Permission Check
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(activity, new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION
             }, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
         }
-
-
     }
 
     // Basic Functions
-    public boolean setVerbose(boolean bool){
-        this.verbose = bool;
-        return true;
-    }
-    public boolean getVerbose(){
-        return this.verbose;
-    }
+//    public boolean setVerbose(boolean bool){
+//        this.verbose = bool;
+//        return true;
+//    }
+//    public boolean getVerbose(){
+//        return this.verbose;
+//    }
     public WifiManager getTestWF(){
         return wifiManager;
     }
@@ -58,9 +57,12 @@ public class WifiUtill {
 
     // Sub Functions
     public boolean connect(String ssid, String password, String capabilities) {
+        // Ref. https://stackoverflow.com/questions/8818290/how-do-i-connect-to-a-specific-wi-fi-network-in-android-programmatically
         try {
+            // [+] If Same Network Case
+            // [-] Can't Connect Machine Connection Point
 
-            Log.d(TAG, "[*] Connect SSID : " + ssid + ", Capabilities : " + capabilities);
+            Log.d(TAG, "[*] Connect SSID : " + ssid + "\n [+] Capabilities : " + capabilities + "\n [+] Password : " + password);
 
             String networkSSID = ssid;
             String networkPass = password;
@@ -83,11 +85,13 @@ public class WifiUtill {
                 conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
                 conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
 
-                if (networkPass.matches("^[0-9a-fA-F]+$")) {
-                    conf.wepKeys[0] = networkPass;
-                } else {
-                    conf.wepKeys[0] = "\"".concat(networkPass).concat("\"");
-                }
+                // This Code Have Password Not Vaild Problem ("")
+//                if (networkPass.matches("^[0-9a-fA-F]+$")) {
+////                    conf.wepKeys[0] = networkPass;
+//                } else {
+////                    conf.wepKeys[0] = "\"".concat(networkPass).concat("\"");
+//                }
+                conf.wepKeys[0] = "\"" + networkPass + "\"";
 
                 conf.wepTxKeyIndex = 0;
 
@@ -129,6 +133,7 @@ public class WifiUtill {
 
             List<WifiConfiguration> list = this.wifiManager.getConfiguredNetworks();
             for (WifiConfiguration i : list) {
+                Log.d(TAG+"|CHECK","");
                 if (i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
                     Log.v(TAG, "WifiConfiguration SSID " + i.SSID);
 
@@ -141,7 +146,7 @@ public class WifiUtill {
                     boolean isReconnected = this.wifiManager.reconnect();
                     Log.v(TAG, "isReconnected : " + isReconnected);
 
-                    Log.v(TAG, "[+] Password: "+conf.wepKeys[0]);
+//                    Log.v(TAG, "[+] Password: "+conf.wepKeys[0]);
 
                     break;
                 }
